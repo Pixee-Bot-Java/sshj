@@ -16,6 +16,7 @@
 package net.schmizz.sshj.userauth.keyprovider;
 
 import com.hierynomus.sshj.common.KeyAlgorithm;
+import io.github.pixee.security.BoundedLineReader;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
 import net.i2p.crypto.eddsa.EdDSAPublicKey;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
@@ -211,7 +212,7 @@ public class PuTTYKeyFile extends BaseFileKeyProvider {
         try {
             String headerName = null;
             String line;
-            while ((line = r.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(r, 5_000_000)) != null) {
                 int idx = line.indexOf(": ");
                 if (idx > 0) {
                     headerName = line.substring(0, idx);
