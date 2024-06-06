@@ -252,7 +252,7 @@ public class OpenSSHKeyV1KeyFile extends BaseFileKeyProvider {
     }
 
     private void initializeCipher(final String kdfName, final byte[] kdfOptions, final Cipher cipher) throws Buffer.BufferException {
-        if (kdfName.equals(BCRYPT)) {
+        if (BCRYPT.equals(kdfName)) {
             final PlainBuffer bufferedOptions = new PlainBuffer(kdfOptions);
             byte[] passphrase = new byte[0];
             if (pwdf != null) {

@@ -43,10 +43,10 @@ public class ConsoleKnownHostsVerifier
         console.printf("The authenticity of host '%s' can't be established.\n" +
                 "%s key fingerprint is %s.\n", hostname, type, SecurityUtils.getFingerprint(key));
         String response = console.readLine("Are you sure you want to continue connecting (yes/no)? ");
-        while (!(response.equalsIgnoreCase(YES) || response.equalsIgnoreCase(NO))) {
+        while (!(YES.equalsIgnoreCase(response) || NO.equalsIgnoreCase(response))) {
             response = console.readLine("Please explicitly enter yes/no: ");
         }
-        if (response.equalsIgnoreCase(YES)) {
+        if (YES.equalsIgnoreCase(response)) {
             try {
                 entries().add(new HostEntry(null, hostname, KeyType.fromKey(key), key));
                 write();
