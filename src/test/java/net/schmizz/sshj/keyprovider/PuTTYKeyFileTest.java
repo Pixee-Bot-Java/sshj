@@ -16,6 +16,7 @@
 package net.schmizz.sshj.keyprovider;
 
 import com.hierynomus.sshj.userauth.keyprovider.OpenSSHKeyV1KeyFile;
+import io.github.pixee.security.BoundedLineReader;
 import net.schmizz.sshj.userauth.keyprovider.PKCS8KeyFile;
 import net.schmizz.sshj.userauth.keyprovider.PuTTYKeyFile;
 import net.schmizz.sshj.util.CorruptBase64;
@@ -588,14 +589,14 @@ public class PuTTYKeyFileTest {
         try (var reader = new BufferedReader(new StringReader(source))) {
             StringBuilder result = new StringBuilder();
             while (true) {
-                String line = reader.readLine();
+                String line = BoundedLineReader.readLine(reader, 5_000_000);
                 if (line == null) {
                     break;
                 } else if (line.startsWith(sectionPrefix)) {
                     int base64LineCount = Integer.parseInt(line.substring(sectionPrefix.length()));
                     StringBuilder base64 = new StringBuilder();
                     for (int i = 0; i < base64LineCount; ++i) {
-                        base64.append(Objects.requireNonNull(reader.readLine()));
+                        base64.append(Objects.requireNonNull(BoundedLineReader.readLine(reader, 5_000_000)));
                     }
                     String corruptedBase64 = CorruptBase64.corruptBase64(base64.toString());
 

@@ -18,6 +18,7 @@ package net.schmizz.sshj.transport.verification;
 import com.hierynomus.sshj.common.KeyAlgorithm;
 import com.hierynomus.sshj.transport.verification.KnownHostMatchers;
 import com.hierynomus.sshj.userauth.certificate.Certificate;
+import io.github.pixee.security.BoundedLineReader;
 import net.schmizz.sshj.common.*;
 import org.slf4j.Logger;
 
@@ -86,7 +87,7 @@ public class OpenSSHKnownHosts
     private void readEntries(BufferedReader br) throws IOException {
         final EntryFactory entryFactory = new EntryFactory();
         String line;
-        while ((line = br.readLine()) != null) {
+        while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
             try {
                 KnownHostEntry entry = entryFactory.parseEntry(line);
                 if (entry != null) {
