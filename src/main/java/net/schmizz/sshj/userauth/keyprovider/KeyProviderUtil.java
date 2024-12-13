@@ -16,6 +16,7 @@
 package net.schmizz.sshj.userauth.keyprovider;
 
 import com.hierynomus.sshj.userauth.keyprovider.OpenSSHKeyV1KeyFile;
+import io.github.pixee.security.BoundedLineReader;
 import net.schmizz.sshj.common.IOUtils;
 
 import java.io.*;
@@ -75,7 +76,7 @@ public class KeyProviderUtil {
         BufferedReader br = new BufferedReader(privateKey);
         try {
             String header;
-            while ((header = br.readLine()) != null) {
+            while ((header = BoundedLineReader.readLine(br, 5_000_000)) != null) {
                 header = header.trim();
                 if (!header.isEmpty()) {
                     break;

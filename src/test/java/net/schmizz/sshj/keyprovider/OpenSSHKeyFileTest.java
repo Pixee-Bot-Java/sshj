@@ -18,6 +18,7 @@ package net.schmizz.sshj.keyprovider;
 import com.hierynomus.sshj.common.KeyDecryptionFailedException;
 import com.hierynomus.sshj.userauth.certificate.Certificate;
 import com.hierynomus.sshj.userauth.keyprovider.OpenSSHKeyV1KeyFile;
+import io.github.pixee.security.BoundedLineReader;
 import net.schmizz.sshj.common.KeyType;
 import net.schmizz.sshj.userauth.keyprovider.FileKeyProvider;
 import net.schmizz.sshj.userauth.keyprovider.OpenSSHKeyFile;
@@ -461,7 +462,7 @@ public class OpenSSHKeyFileTest {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(initialPrivateKey)));
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(corruptedPrivateKey)));
         String line;
-        while ((line = reader.readLine()) != null) {
+        while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
             writer.write(line);
             writer.write("\n");
         }
@@ -472,7 +473,7 @@ public class OpenSSHKeyFileTest {
         reader = new BufferedReader(new InputStreamReader(new FileInputStream(initialPublicKey)));
         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(corruptedPublicKey)));
         writer.write("\n\n   \t ");
-        writer.write(reader.readLine().replace(" ", " \t "));
+        writer.write(BoundedLineReader.readLine(reader, 5_000_000).replace(" ", " \t "));
         writer.write("\n\n");
         reader.close();
         writer.close();
