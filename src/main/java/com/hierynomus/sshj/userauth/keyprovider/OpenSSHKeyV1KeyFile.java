@@ -21,6 +21,7 @@ import com.hierynomus.sshj.transport.cipher.BlockCiphers;
 import com.hierynomus.sshj.transport.cipher.ChachaPolyCiphers;
 import com.hierynomus.sshj.transport.cipher.GcmCiphers;
 import com.hierynomus.sshj.userauth.keyprovider.bcrypt.BCrypt;
+import io.github.pixee.security.BoundedLineReader;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
 import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec;
@@ -305,14 +306,14 @@ public class OpenSSHKeyV1KeyFile extends BaseFileKeyProvider {
         final StringBuilder builder = new StringBuilder();
 
         boolean footerFound = false;
-        String line = reader.readLine();
+        String line = BoundedLineReader.readLine(reader, 5_000_000);
         while (line != null) {
             if (line.startsWith(END)) {
                 footerFound = true;
                 break;
             }
             builder.append(line);
-            line = reader.readLine();
+            line = BoundedLineReader.readLine(reader, 5_000_000);
         }
 
         if (footerFound) {
@@ -324,9 +325,9 @@ public class OpenSSHKeyV1KeyFile extends BaseFileKeyProvider {
     }
 
     private boolean checkHeader(final BufferedReader reader) throws IOException {
-        String line = reader.readLine();
+        String line = BoundedLineReader.readLine(reader, 5_000_000);
         while (line != null && !line.startsWith(BEGIN)) {
-            line = reader.readLine();
+            line = BoundedLineReader.readLine(reader, 5_000_000);
         }
         if (line == null) {
             return false;

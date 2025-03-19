@@ -16,6 +16,7 @@
 
 package net.schmizz.sshj.keyprovider;
 
+import io.github.pixee.security.BoundedLineReader;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.util.CorruptBase64;
 import org.junit.jupiter.api.io.TempDir;
@@ -51,7 +52,7 @@ public class CorruptedPublicKeyTest {
             String publicKeyText;
             try (var reader = new BufferedReader(new FileReader(
                     keyRoot.resolve(privateKeyFileName + ".pub").toFile()))) {
-                publicKeyText = reader.readLine();
+                publicKeyText = BoundedLineReader.readLine(reader, 5_000_000);
             }
 
             String[] parts = publicKeyText.split("\\s+");
