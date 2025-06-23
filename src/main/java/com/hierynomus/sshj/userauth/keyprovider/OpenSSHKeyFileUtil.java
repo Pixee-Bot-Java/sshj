@@ -15,6 +15,7 @@
  */
 package com.hierynomus.sshj.userauth.keyprovider;
 
+import io.github.pixee.security.BoundedLineReader;
 import net.schmizz.sshj.common.Base64DecodingException;
 import net.schmizz.sshj.common.Base64Decoder;
 import net.schmizz.sshj.common.Buffer;
@@ -50,7 +51,7 @@ public class OpenSSHKeyFileUtil {
         final BufferedReader br = new BufferedReader(publicKey);
         try {
             String keydata;
-            while ((keydata = br.readLine()) != null) {
+            while ((keydata = BoundedLineReader.readLine(br, 5_000_000)) != null) {
                 keydata = keydata.trim();
                 if (!keydata.isEmpty()) {
                     String[] parts = keydata.trim().split("\\s+");
